@@ -1,4 +1,5 @@
 local module = {}
+local consts = require(script.Parent.Consts)
 
 local scriptHandler
 local categoryData
@@ -33,7 +34,7 @@ local function shuffleAnswers(answers)
 	return answers
 end
 
-local function getCategory(identifier)
+function module.GetCategory(identifier)
 	for _, category in data.Categories do
 		if category.GridPlacement == identifier then
 			return category
@@ -42,7 +43,7 @@ local function getCategory(identifier)
 end
 
 local function getFirstPage(category, categoryData)
-	for index, score in categoryData.Scores do
+	for index, score in categoryData.Scores or {} do
 		if score < 100 then
 			return category.Content[index]
 		end
@@ -73,7 +74,7 @@ local function updateMenuTick(category, categoryData)
 	local button = episodeGrid:FindFirstChild(category.GridPlacement)
 	
 	if button then
-		button.Completed.Visible = categoryData.Completed
+		button.Completed.Visible = categoryData.Completed or false
 	end
 end
 
@@ -93,7 +94,7 @@ local function updateProgress(currentPage, category, categoryData)
 			pageRef ..= "Viewing"
 		end
 		
-		if categoryData.Scores[index] == 100 then
+		if categoryData.Scores and categoryData.Scores[index] == 100 then
 			completeCount += 1
 			pageRef ..= "Done"
 		end
@@ -105,7 +106,7 @@ local function updateProgress(currentPage, category, categoryData)
 		icon.Parent = progress.Pages
 	end
 	
-	if completeCount == #categoryData.Scores then
+	if completeCount == #(categoryData.Scores) then
 		categoryData.Completed = true
 		plugin:SetSetting(categoryData.Setting, categoryData)
 	end
@@ -118,11 +119,33 @@ local function generateSettings(setting, category)
 		Completed = false,
 		Setting = setting,
 		Scores = table.create(#category.Content, 0),
-		Sources = table.create(#category.Content, category.Template)
+		Sources = table.create(#category.Content, category.Template),
+		Version = consts.Version
 	}
 	
 	plugin:SetSetting(setting, newSettings)
 	return newSettings
+end
+
+local function getData(setting, category)
+	local data = plugin:GetSetting(setting)
+
+	if data then
+		-- if the data is outdated, backup in-case of corruption
+		if not data.Version or data.Version ~= consts.Version then
+			local backupKey = `bkpv{data.Version or "1.1"}`
+			plugin:SetSetting(backupKey .. setting, data)
+
+			-- update the version and save
+			data.Version = consts.Version
+			plugin:SetSetting(setting, data)
+		end
+
+		return data
+	end
+
+	-- data doesn't exist. let's just generate it
+	return generateSettings(setting, category)
 end
 
 local function generateFinalScore(page, score)
@@ -149,7 +172,7 @@ end
 
 local function generateQuiz(page)
 	local pageNumber = getPageNumber(page)
-	local score = categoryData.Scores[pageNumber]
+	local score = categoryData.Scores[pageNumber] or 0
 
 	scriptHandler.HideScript()
 	practiceView.Completed.Visible = score == 100
@@ -167,11 +190,19 @@ end
 
 local function generateExercise(page)
 	local pageNumber = getPageNumber(page)
-	local score = categoryData.Scores[pageNumber]
+	local score = categoryData.Scores[pageNumber] or 0
+	local isStatement = page.Title == "Welcome!"
+	local isAd = page.Title == "Hello!"
 	
 	practiceView.Completed.Visible = score == 100
 	exerciseView.TitleLabel.Text = page.Title
 	exerciseView.Description.Text = page.Description
+
+	exerciseView.OkButton.Visible = isStatement and not isAd
+	exerciseView.TestButton.Visible = not isStatement and not isAd
+	exerciseView.HintButton.Visible = not isStatement and not isAd
+	practiceView.Progress.Visible = not isStatement and not isAd
+
 	scriptHandler.SetupEnv(categoryData.Sources[pageNumber],
 		categoryData, pageNumber, category)
 	
@@ -179,15 +210,33 @@ local function generateExercise(page)
 	exerciseView.Visible = true
 end
 
-function module.SetupMenu(localPlugin, newData)
+function module.SetupMenu(localPlugin, newData, searchContent)
 	plugin = localPlugin
 	data = newData
+
+	local sizeLimit = 0
+
+	-- remove existing episodes
+	for _, episode in episodeGrid:GetChildren() do
+		if episode:IsA("ImageButton") and episode.Name ~= "_Template" then
+			episode:Destroy()
+		end
+	end
 	
 	for _, category in data.Categories do
-		local setting = "scriptmate" .. category.GridPlacement
+		local setting = consts.DataId .. category.GridPlacement
 		
-		categoryData = plugin:GetSetting(setting)
-			or generateSettings(setting, category)
+		categoryData = getData(setting, category)
+
+		-- if this is a search, check whether the episode matches
+		if searchContent then
+			local episodeContent = category.Title .. category.Subtitle
+			episodeContent = episodeContent:lower():gsub("%s", "")
+
+			if not episodeContent:find(searchContent, 1, true) then
+				continue
+			end
+		end
 		
 		local episode = episodeGrid._Template:Clone()
 		episode.Title.Text = category.Title
@@ -197,12 +246,23 @@ function module.SetupMenu(localPlugin, newData)
 		episode.Visible = true
 		episode.Completed.Visible = categoryData.Completed
 		episode.Parent = episodeGrid
+
+		sizeLimit += episode.AbsoluteSize.Y + 10
 	end
+
+	-- adapt canvas size to fit all episodes.
+	-- there is a grid, so an odd number of episodes 
+	sizeLimit = sizeLimit % 2 == 0 and sizeLimit or sizeLimit + 1
+	sizeLimit = math.ceil(sizeLimit / 2)
+
+	episodeGrid.CanvasSize = UDim2.new(0, 0, 0, sizeLimit)
 end
 
 local function updatePage(page)
 	updateProgress(page, category, categoryData)
-
+	exerciseView.HintButton.Visible = true
+	exerciseView.SolButton.Visible = false
+	
 	if page.Type == "Exercise" then
 		generateExercise(page)
 	elseif page.Type == "Quiz" then
@@ -211,18 +271,34 @@ local function updatePage(page)
 end
 
 function module.SetupPage(localPlugin, identifier, handler)
-	local setting = "scriptmate" .. identifier
+	local setting = consts.DataId .. identifier -- //////////// "scriptmate" .. identifier
 	
 	plugin = localPlugin
 	scriptHandler = handler
 
-	category = getCategory(identifier)
-	categoryData = plugin:GetSetting(setting)
-		or generateSettings(setting, category)
+	category = module.GetCategory(identifier)
+	categoryData = getData(setting, category)
+	
+	-- if categories are missing from database,
+	-- add the missing values. prevents corruption
+	if #categoryData.Sources < #category.Content then
+		for i = 1, #category.Content - #categoryData.Sources do
+			categoryData.Sources[#categoryData.Sources + 1] = category.Template
+			categoryData.Scores[#categoryData.Scores + 1] = 0
+		end
+
+		categoryData.Setting = setting
+	end
 	
 	practiceView.MainLabel.Text = category.Subtitle
 	
 	local page = getFirstPage(category, categoryData)
+
+	-- if page could not be found, go to page 1
+	if not page then
+		page = category.Content[1]
+	end
+
 	updatePage(page)
 	
 	return page
@@ -241,17 +317,26 @@ function module.SwitchPage(page, direction)
 	return page
 end
 
-function module.CompletedPage(page)
+function module.CompletedPage(page, isStatement)
 	local pageNumber = getPageNumber(page)
 	
 	if categoryData.Scores[pageNumber] ~= 100 then
 		categoryData.Scores[pageNumber] = 100
+
+		if isStatement then
+			categoryData.Completed = true
+		end
+
 		plugin:SetSetting(categoryData.Setting, categoryData)
 		scriptHandler.SaveScript(true, categoryData)
 		
 		local newPage = module.SwitchPage(page, 1)
+
+		if isStatement then
+			updateMenuTick(category, categoryData)
+		end
 		
-		if newPage == page then
+		if newPage == page or isStatement then
 			practiceView.Visible = false
 			mainMenu.Visible = true
 		end
@@ -260,7 +345,12 @@ function module.CompletedPage(page)
 	end
 	
 	scriptHandler.SaveScript(true)
+
 	return page
+end
+
+function module.GetSolution()
+	print(categoryData, category, data)
 end
 
 function module.DisplayQuestion(page, questionNumber)
@@ -297,8 +387,10 @@ function module.NextQuestion(page, button, questionNumber)
 end
 
 updateData.Event:Connect(function(newCatData)
-	categoryData = newCatData
-	plugin:SetSetting(categoryData.Setting, categoryData)
+	if newCatData and newCatData.Setting then
+		categoryData = newCatData
+		plugin:SetSetting(categoryData.Setting, categoryData)
+	end
 end)
 
 return module

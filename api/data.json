@@ -1,11 +1,45 @@
 {
     "Categories": [
         {
+            "Title": "Hey!",
+            "Subtitle": "Please Update",
+            "BackgroundImage": "http://www.roblox.com/asset/?id=14833802684",
+            "GridPlacement": "#",
+            "Template": "-- An important update is available!\n\n-- Head to PLUGINS -> Manage Plugins to update!",
+            "Content": [
+                {
+                    "Type": "Exercise",
+                    "Title": "Update available",
+                    "Description": "An important update is available! Head to PLUGINS -> Manage Plugins to update!",
+                    "Hint": "No hint.",
+                    "Validator": "return true",
+                    "ScriptValidator": "return true"
+                }
+            ]
+        },
+        {
+            "Title": "Episode 0",
+            "Subtitle": "Get Started",
+            "BackgroundImage": "http://www.roblox.com/asset/?id=13727003716",
+            "GridPlacement": "000",
+            "Template": "--[[\n\nRECOMMENDED: Watch the video tutorial series here:\nhttps://devforum.roblox.com/t/video/1972156\n\nNeed more help? Join this scripting chat server:\nhttps://roblox.com/groups/3232454\n\n]]",
+            "Content": [
+                {
+                    "Type": "Exercise",
+                    "Title": "Welcome!",
+                    "Description": "It is <b>highly recommended</b> to watch the short tutorial videos before each episode.\n\n<b>Copy the link</b> in the script editor to get started.\n\nIf you have any feedback, be sure to tweet <font color=\"#1DA1F2\">@jotslo</font>.\n\nGood luck on your scripting journey!",
+                    "Hint": "Press 'Test Code' to continue.",
+                    "Validator": "return true",
+                    "ScriptValidator": "return true"
+                }
+            ]
+        },
+        {
             "Title": "Episode 1",
             "Subtitle": "Introduction",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204192311",
             "GridPlacement": "001",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 1: https://www.youtube.com/watch?v=U_QP6S48IaI\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -102,7 +136,7 @@
             "Subtitle": "If Statements",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204193205",
             "GridPlacement": "002",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 2: https://www.youtube.com/watch?v=Gy7vsKBQQj0\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -142,7 +176,7 @@
                     "Description": "Create an if statement that executes, and declare a <b>local</b> variable named <font color=\"rgb(85,170,255)\">myVar</font> inside of its scope.\n\nThe variable should be assigned to the number <b>13</b>\n\nIn the if statement's scope, output the variable's value.\n\nOutside the if statement's scope after running, output the variable's value again, where it should not have a value.",
                     "Hint": "Local variables can only be accessed inside of a scope. If you declare a variable inside the if statement, it will not have a value outside of it, and so should output nil.",
                     "Validator": "wait() local log = game:GetService('LogService'):GetLogHistory() if myVar then return false end if log[#log-1].message:lower():find('13') and log[#log].message:lower():find('nil') then return true end return false",
-                    "ScriptValidator": "return userCode:find('myVar') ~= nil and not userCode:find('print(\\'') and not userCode:find('print(\"')"
+                    "ScriptValidator": "return userCode:find('myVar') ~= nil and not userCode:find('print%(\\'') and not userCode:find('print%(\"')"
                 },
                 {
                     "Type": "Quiz",
@@ -191,7 +225,7 @@
             "Subtitle": "Loops",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204193903",
             "GridPlacement": "003",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 3: https://www.youtube.com/watch?v=nOIUe4k7Ogo\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -247,7 +281,7 @@
                     "Description": "Declare a <b>local</b> variable named <font color=\"rgb(85,170,255)\">myNum</font> inside a <b>do block</b>.\n\nThe variable should be assigned to the number <b>26</b>\n\nIn the do block's scope, output the variable's value.\n\nOutside the do blocks scope after running, output the variable's value again, where it should not have a value.",
                     "Hint": "Local variables can only be accessed inside of a scope. If you declare a variable inside the do block, it will not have a value outside of it, and so should output nil.",
                     "Validator": "wait() local log = game:GetService('LogService'):GetLogHistory() if myNum then return false end if log[#log-1].message:lower():find('26') and log[#log].message:lower():find('nil') then return true end return false",
-                    "ScriptValidator": "return userCode:find('myNum') ~= nil and not userCode:find('print(\\'') and not userCode:find('print(\"')"
+                    "ScriptValidator": "return userCode:find('myNum') ~= nil and not userCode:find('print%(\\'') and not userCode:find('print%(\"')"
                 },
                 {
                     "Type": "Quiz",
@@ -303,7 +337,7 @@
             "Subtitle": "Tables",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204197516",
             "GridPlacement": "004",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 4: https://www.youtube.com/watch?v=JLT4JC9B9nk\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -335,7 +369,7 @@
                     "Description": "Declare a variable named <font color=\"rgb(85,170,255)\">ages</font> and assign it to a <b>table</b>.\n\nThe table must store the ages of the following people: <b>'John'</b> is <b>27</b>, <b>'Jane'</b> is <b>25</b>, <b>'Bob'</b> is <b>32</b>.\n\nThe names (strings) must be used as the indexes, and the ages (numbers) as the values.\n\nAfter declaring the table, output the age of <b>'John'</b>, by referring to the table.",
                     "Hint": "The table should be formatted like: {['Adam'] = 25, ...}. Afterwards, you must refer to the table and use the index to retrieve the value.",
                     "Validator": "wait() if not typeof(ages) == 'table' then return false end local log = game:GetService('LogService'):GetLogHistory() if log[#log].message:lower():find('27') and ages['John'] == 27 and ages['Jane'] == 25 and ages['Bob'] == 32 then return true end return false",
-                    "ScriptValidator": "return not userCode:find('print(\\'') and not userCode:find('print(\"') and not userCode:find('print(27')"
+                    "ScriptValidator": "return not userCode:find('print%(\\'') and not userCode:find('print%(\"') and not userCode:find('print%(27')"
                 },
                 {
                     "Type": "Exercise",
@@ -343,7 +377,7 @@
                     "Description": "Declare a variable named <font color=\"rgb(85,170,255)\">myTable</font> and assign it to a <b>table</b>.\n\nThe table should be formatted as a list, meaning you must <b>not</b> specify the indexes.\n\nInsert any values into the table. The table must contain <b>at least 2</b> values.\n\nAfterwards, use a <b>for loop</b> to output each value in the table in order.\n\nYou may only use the <font color=\"rgb(85,170,255)\">print</font> keyword once in your script.",
                     "Hint": "You should use the generic for loop, which is mentioned in the video. For each value, simply output the variable referring to the value.",
                     "Validator": "wait() if (not typeof(myTable) == 'table') or #myTable < 2 then return false end local log = game:GetService('LogService'):GetLogHistory() for i = 0, #myTable - 1 do if not log[#log-i].message:find(myTable[#myTable-i]) then return false end end return true",
-                    "ScriptValidator": "local _, count = userCode:gsub('print', '') return count == 1 and not userCode:find('print(\\'') and not userCode:find('print(\"')"
+                    "ScriptValidator": "local _, count = userCode:gsub('print', '') return count == 1 and not userCode:find('print%(\\'') and not userCode:find('print%(\"')"
                 },
                 {
                     "Type": "Exercise",
@@ -351,7 +385,7 @@
                     "Description": "Declare a variable named <font color=\"rgb(85,170,255)\">myTable</font> and assign it to a <b>table</b>.\n\nThe table should be formatted as a dictionary, meaning you <b>must</b> specify the indexes.\n\nInsert any indexes and values into the table. The table must contain <b>at least 2</b> sets of indexes & values.\n\nAfterwards, use a <b>for loop</b> to get each index <b>and</b> value in the table.\n\nOn each loop, concatenate the index and value into a string, and output the string.\n\nYou may only use the <font color=\"rgb(85,170,255)\">print</font> keyword once in your script.",
                     "Hint": "You should use the generic for loop. For each value, concatenate both the index and the value using the '..' operator, and output the string.",
                     "Validator": "wait() if (not typeof(myTable) == 'table') then return false end local log = game:GetService('LogService'):GetLogHistory() local len = 0 for i, v in myTable do len += 1 end local function find(msg) for i, v in myTable do if msg:find(tostring(i)) and msg:find(tostring(v)) then return true end end return false end for i = 0, len - 1 do if not find(log[#log-i].message) then return false end end return true",
-                    "ScriptValidator": "local _, count = userCode:gsub('print', '') return count == 1 and not userCode:find('print(\\'') and not userCode:find('print(\"')"
+                    "ScriptValidator": "local _, count = userCode:gsub('print', '') return count == 1 and not userCode:find('print%(\\'') and not userCode:find('print%(\"')"
                 },
                 {
                     "Type": "Quiz",
@@ -400,7 +434,7 @@
             "Subtitle": "Functions",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204198168",
             "GridPlacement": "005",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 5: https://www.youtube.com/watch?v=zKd2KOn49XI\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -497,7 +531,7 @@
             "Subtitle": "Instances",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204199095",
             "GridPlacement": "006",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 6: https://www.youtube.com/watch?v=kZp-xOqc6Sg\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -586,7 +620,7 @@
             "Subtitle": "Local & Module",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204199852",
             "GridPlacement": "007",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 7: https://www.youtube.com/watch?v=OMIPc-8gE64\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -602,7 +636,7 @@
                     "Description": "Manually add a ModuleScript to the <b>ReplicatedStorage</b>, and name it <b>MyModule</b>.\n\nNext, remove the template code, and simply have the ModuleScript return a <b>string</b> of your choice.\n\nFinally, go back to the ScriptMateEnv script, <b>require</b> the ModuleScript, and output the returned string.",
                     "Hint": "You can require a ModuleScript with the <b>require</b> function, with the ModuleScript's location as the argument. The function will then return your ModuleScript's string, which you can assign to a variable, or output directly.",
                     "Validator": "wait() local mod = game.ReplicatedStorage:FindFirstChild('MyModule') if not mod then return false end local log = game:GetService('LogService'):GetLogHistory() if log[#log].message:find(require(mod)) then return true end return false",
-                    "ScriptValidator": "return userCode:find('require') ~= nil and not userCode:find('print(\"') and not userCode:find('print(\\'')"
+                    "ScriptValidator": "return userCode:find('require') ~= nil and not userCode:find('print%(\"') and not userCode:find('print%(\\'')"
                 },
                 {
                     "Type": "Exercise",
@@ -626,7 +660,7 @@
                     "Description": "ModuleScripts run any code within them when required.\n\nTo demonstrate this, go to the <b>MyModule</b> ModuleScript, and call the print function to output any message.\n\nNext, simply return a nil value, so that a value is returned.\n\nFinally, go back to the ScriptMateEnv script, and <b>require</b> the ModuleScript.\n\nIf done correctly, the ModuleScript will output your message when required, and then return a nil value.",
                     "Hint": "You don't need to assign the returned value to a variable when requiring. Simply call the <b>print</b> function within the ModuleScript, and it will output the message. It does not need to be attached to a variable, or returned in any way.",
                     "Validator": "wait() local mod = game.ReplicatedStorage:FindFirstChild('MyModule') return mod.Source:find('print') ~= nil",
-                    "ScriptValidator": "return userCode:find('require') ~= nil and not userCode:find('print(\"') and not userCode:find('print(\\'')"
+                    "ScriptValidator": "return userCode:find('require') ~= nil and not userCode:find('print%(\"') and not userCode:find('print%(\\'')"
                 },
                 {
                     "Type": "Quiz",
@@ -675,7 +709,7 @@
             "Subtitle": "Remotes",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204200695",
             "GridPlacement": "008",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 8: https://www.youtube.com/watch?v=ic2vleSYFZw\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",
@@ -756,7 +790,7 @@
             "Subtitle": "Challenges",
             "BackgroundImage": "http://www.roblox.com/asset/?id=10204201473",
             "GridPlacement": "009",
-            "Template": "-- Before completing this exercise, please watch the episode below.\n-- Have feedback? Feel free to send me a tweet @ twitter.com/jotslo\n-- EPISODE 9: https://www.youtube.com/watch?v=HcE7wXLUEe8\n\n",
+            "Template": "--> Watch the video tutorial before completing this challenge\n--> WATCH EPISODES HERE: https://devforum.roblox.com/t/video/1972156\n--> Recommended scripting chat server @ roblox.com/groups/3232454\n\n",
             "Content": [
                 {
                     "Type": "Exercise",

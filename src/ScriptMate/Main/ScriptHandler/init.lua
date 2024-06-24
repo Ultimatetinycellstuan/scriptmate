@@ -1,6 +1,7 @@
 local module = {}
 
 local httpService = game:GetService("HttpService")
+local scriptEditor = game:GetService("ScriptEditorService")
 local sourceHeader = require(script.SourceHeader)
 
 local execTest = script.ExecTest
@@ -57,31 +58,41 @@ end
 
 function module.TestCode(page)
 	-- fixes annoying behaviour causing by modulescript caching
-	local fixedSource = sourceHeader .. " " .. scriptEnv.Source
+	local fixedSource = sourceHeader .. "\n" .. scriptEnv.Source
 
-	if not runTest(preExecTest, page.ScriptValidator) then
-		return false
+	local test1 = runTest(preExecTest, page.ScriptValidator)
+	if not test1 then return false end
+
+	local test2 do
+		if page.Threaded then
+			test2 = runTest(execTest, `task.spawn(function() {fixedSource} end)\n{page.Validator}`)
+		else
+			test2 = runTest(execTest, fixedSource .. "\n" .. page.Validator)
+		end
 	end
 
-	if not runTest(execTest, fixedSource .. " " .. page.Validator) then
-		return false
-	end
+	if not test2 then return false end
 
 	print("ScriptMate - Code success!")
 	return true
 end
 
+function module.RunScript(code)
+	local newScript = Instance.new("ModuleScript")
+	newScript.Source = `{code}\nreturn nil` --123
+	require(newScript)
+	newScript:Destroy()
+end
+
 function module.SetupEnv(source, newCatData, newPageNo, category)
-	local lineCount = #scriptEnv.Source:split("\n")
-	
-	--if pageNumber and category.Content[pageNumber].Type == "Exercise" then
-	--	autoSaveScript(true)
-	--end
-	
 	pageNumber = newPageNo
 	categoryData = newCatData
-	scriptEnv.Source = source
-	plugin:OpenScript(scriptEnv, lineCount)
+	--scriptEnv.Source = source or "" --123
+	plugin:OpenScript(scriptEnv, #scriptEnv.Source:split("\n"))
+
+	scriptEditor:UpdateSourceAsync(scriptEnv, function(oldSource)
+		return source or oldSource
+	end)
 end
 
 function module.GenerateScript(localPlugin)
@@ -91,8 +102,15 @@ function module.GenerateScript(localPlugin)
 	
 	scriptEnv = Instance.new("Script")
 	scriptEnv.Name = "ScriptMateEnv"
-	scriptEnv.Source = "-- This script is used for ScriptMate exercises"
-	scriptEnv.Parent = httpService
+	scriptEnv.Source = "-- This script is used for ScriptMate exercises" --123
+
+	if not httpService:FindFirstChild("SMPro") then
+		local pro = Instance.new("Folder")
+		pro.Name = "SMPro"
+		pro.Parent = httpService
+	end
+
+	scriptEnv.Parent = httpService.SMPro
 	
 	for _, child in httpService:GetChildren() do
 		if child.Name == "ScriptMateEnv" and child ~= scriptEnv then
@@ -125,6 +143,45 @@ end
 function module.HideScript()
 	if scriptEnv.Parent then
 		scriptEnv:Destroy()
+	end
+end
+
+local originalCFrame = workspace.CurrentCamera.CFrame
+local originalCamType = Enum.CameraType.Fixed
+function module.ToggleScript(enabled)
+	-- if we're enabling the script, open the script editor
+	if enabled then
+		if scriptEnv then
+			scriptEditor:OpenScriptDocumentAsync(scriptEnv)
+		end
+
+		-- revert the camera to its original state
+		workspace.CurrentCamera.CFrame = originalCFrame
+		workspace.CurrentCamera.CameraType = originalCamType
+		workspace.CurrentCamera.CameraSubject = nil
+	
+	-- if we're disabling, temporarily close the script.
+	-- we don't delete it here because we want to keep the source.
+	-- this plugin was also written before closing scripts was possible, so is a bit outdated.
+	else
+		local doc = scriptEditor:FindScriptDocument(scriptEnv)
+
+		if doc then
+			doc:CloseAsync()
+
+			-- store camera details so we can revert after the upcoming test
+			originalCFrame = workspace.CurrentCamera.CFrame
+			originalCamType = workspace.CurrentCamera.CameraType
+		end
+	end
+end
+
+function module.ShowSolution(solution)
+	if scriptEnv then
+		--scriptEnv.Source = solution --123
+		scriptEditor:UpdateSourceAsync(scriptEnv, function(oldSource)
+			return solution or oldSource
+		end)
 	end
 end
 

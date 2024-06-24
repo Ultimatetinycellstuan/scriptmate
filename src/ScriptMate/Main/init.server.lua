@@ -10,6 +10,7 @@ if runService:IsEdit() then
 
 	local studio = settings().Studio
 	local themeMap = require(script.ThemeMap)
+	local consts = require(script.Consts)
 
 	local debugMode = false
 	local windowState = false
@@ -17,9 +18,9 @@ if runService:IsEdit() then
 	local mainWidget
 
 	local toolbar = plugin:CreateToolbar(pluginTitle)
-	local button = toolbar:CreateButton(pluginTitle,
-		"Practice skills you've learned from jotslo's tutorial series with a range of challenges and exercises.",
-		"rbxassetid://9739366336")
+	local button = toolbar:CreateButton("ScriptMate",
+		"Improve your scripting skills with a range of tutorials, challenges && more.",
+		"rbxassetid://14605179846")
 	
 	button.ClickableWhenViewportHidden = true
 
@@ -31,7 +32,17 @@ if runService:IsEdit() then
 	local function updateTheme()
 		for property, list in themeMap do
 			for element, color in list do
-				element[property] = studio.Theme:GetColor(color)
+				local newColor = studio.Theme:GetColor(color)
+
+				-- if input field and light mode, make it slightly darker
+				if color == Enum.StudioStyleGuideColor.InputFieldBackground then
+					if newColor.R > 0.8 then
+						element[property] = Color3.new(0.9, 0.9, 0.9)
+						continue
+					end
+				end
+
+				element[property] = newColor
 			end
 		end
 	end
@@ -56,13 +67,27 @@ if runService:IsEdit() then
 
 		local widgetInfo = DockWidgetPluginGuiInfo.new(
 			Enum.InitialDockState.Left,
-			true, true, 0, 0, 320, 600)
+			true, true, 0, 0, 320, 450)
 		local widget = plugin:CreateDockWidgetPluginGui(
 			httpService:GenerateGUID(), widgetInfo)
 
 		widget.Title = pluginTitle
 		ui.Parent = widget
 		return widget
+	end
+
+	local function showWelcome()
+		-- if first ever use, ignore
+		if not plugin:GetSetting(`{consts.DataId}000`) then
+			plugin:SetSetting(`{consts.DataId}ShownWelcome`, true)
+			return
+		end
+
+		if not plugin:GetSetting(`{consts.DataId}ShownWelcome`) then
+			plugin:SetSetting(`{consts.DataId}ShownWelcome`, true)
+			ui.NoticeView.Visible = true
+			ui.NoticeView.UpgradeMsg.Visible = true
+		end
 	end
 
 	button.Click:Connect(function()
@@ -87,7 +112,8 @@ if runService:IsEdit() then
 	end
 	
 	studio.ThemeChanged:Connect(updateTheme)
+	updateTheme()
 	button:SetActive(windowState)
 	require(script.ButtonHandler)(plugin)
-	updateTheme()
+	showWelcome()
 end
